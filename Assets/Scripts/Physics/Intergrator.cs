@@ -1,0 +1,20 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public static class Intergrator
+{
+    
+    public static void ExplicitEuler(Body body, float dt)
+    {
+        //body.acceleration =  / body.mass;
+        body.position += body.velocity * dt;
+        body.velocity += body.acceleration * dt;
+    }
+
+    public static void SemiImplicitEuler(Body body, float dt)
+    {
+        body.velocity += body.acceleration * dt;
+        body.position += body.velocity * dt;
+    }
+}
