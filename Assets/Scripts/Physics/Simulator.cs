@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -44,11 +45,27 @@ public class Simulator : Singleton<Simulator>
         }
 	}
 
+    public Body GetScreenToBody(Vector3 screen)
+    {
+		Body body = null;
+
+		Ray ray = activeCamera.ScreenPointToRay(screen);
+		RaycastHit2D hit =  Physics2D.GetRayIntersection(ray);
+		if(hit.collider)
+        {
+			hit.collider.gameObject.TryGetComponent<Body>(out body);
+        }
+
+
+		return body;
+    }
+
     public Vector3 GetScreenToWorldPosition(Vector2 screen)
 	{
 		Vector3 world = activeCamera.ScreenToWorldPoint(screen);
 		return new Vector3(world.x, world.y, 0);
 	}
 
+	
 
 }
