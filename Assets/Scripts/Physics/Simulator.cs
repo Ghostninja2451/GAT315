@@ -32,6 +32,15 @@ public class Simulator : Singleton<Simulator>
 
 		while (timeAccumulator >= fixedDeltaTime)
 		{
+			bodies.ForEach(body => body.shape.color = Color.white);
+			Collision.CreateContact(bodies, out var contacts);
+			contacts.ForEach(contact =>
+			{
+				contact.bodyA.shape.color = Color.green;
+				contact.bodyB.shape.color = Color.blue;
+
+			});
+
 			bodies.ForEach(body =>
 			{
 				Intergrator.SemiImplicitEuler(body, fixedDeltaTime);
