@@ -40,6 +40,7 @@ public class Simulator : Singleton<Simulator>
 				contact.bodyB.shape.color = Color.blue;
 
 			});
+			Collision.SeparateContacts(contacts);
 
 			bodies.ForEach(body =>
 			{
