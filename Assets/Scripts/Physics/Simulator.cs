@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Simulator : Singleton<Simulator>
 {
+	[SerializeField] BoolData simulate;
 	[SerializeField] List<Force> forces;
 	[SerializeField] IntData fixedFPS;
 	[SerializeField] StringData fps;
@@ -24,6 +25,9 @@ public class Simulator : Singleton<Simulator>
 		//get fps
 		fps.value = (1.0f / Time.deltaTime).ToString("F2");
 
+
+		if (!simulate.value) return; 
+
 		//add current delta time to time accumulator
 		timeAccumulator += Time.deltaTime;
 
@@ -32,19 +36,21 @@ public class Simulator : Singleton<Simulator>
 
 		while (timeAccumulator >= fixedDeltaTime)
 		{
-			bodies.ForEach(body => body.shape.color = Color.white);
+			//bodies.ForEach(body => body.shape.color = Color.white);
 			Collision.CreateContact(bodies, out var contacts);
-			contacts.ForEach(contact =>
-			{
-				contact.bodyA.shape.color = Color.green;
-				contact.bodyB.shape.color = Color.blue;
+			//contacts.ForEach(contact =>
+			//{
+			//	contact.bodyA.shape.color = Color.green;
+			//	contact.bodyB.shape.color = Color.blue;
 
-			});
+			//});
 			Collision.SeparateContacts(contacts);
+			Collision.ApplyImpulses(contacts);
 
 			bodies.ForEach(body =>
 			{
 				Intergrator.SemiImplicitEuler(body, fixedDeltaTime);
+				body.position = body.position.Wrap(-GetScreenSize() * 0.5f, GetScreenSize() * 0.5f);
 			});
 			timeAccumulator -= fixedDeltaTime;
 		}
@@ -75,7 +81,15 @@ public class Simulator : Singleton<Simulator>
 		Vector3 world = activeCamera.ScreenToWorldPoint(screen);
 		return new Vector3(world.x, world.y, 0);
 	}
-
 	
+	public Vector2 GetScreenSize()
+    {
+		return activeCamera.ViewportToWorldPoint(Vector2.one) * 2;
+    }
+	public void Clear()
+    {
+		bodies.ForEach(body => Destroy(body.gameObject));
+		bodies.Clear();
+    }
 
 }
